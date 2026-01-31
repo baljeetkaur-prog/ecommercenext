@@ -1,17 +1,30 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import AddToCartButton from "../components/AddToCartButton";
 
-async function getProducts() {
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000";
+export default function ProductsPage() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const res = await fetch(`${baseUrl}/api/products`, { cache: "no-store" });
-  return res.json();
-}
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const res = await fetch("/api/products");
+        const data = await res.json();
+        setProducts(data);
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-export default async function ProductsPage() {
-  const products = await getProducts();
+    fetchProducts();
+  }, []);
+
+  if (loading) return <p style={{ padding: "20px" }}>Loading products...</p>;
 
   return (
     <div style={{ padding: "20px" }}>

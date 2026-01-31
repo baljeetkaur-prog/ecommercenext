@@ -1,11 +1,12 @@
-// src/app/products/page.jsx
 import Link from "next/link";
 import AddToCartButton from "../components/AddToCartButton";
 
 async function getProducts() {
-  const res = await fetch("/api/products", {
-    cache: "no-store",
-  });
+  const baseUrl = process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
+
+  const res = await fetch(`${baseUrl}/api/products`, { cache: "no-store" });
   return res.json();
 }
 
@@ -32,7 +33,6 @@ export default async function ProductsPage() {
               textAlign: "center",
             }}
           >
-            {/* Product Image */}
             <img
               src={product.image}
               alt={product.name}
@@ -48,7 +48,6 @@ export default async function ProductsPage() {
               </Link>
             </div>
 
-            {/* Add to Cart */}
             <AddToCartButton product={product} />
           </div>
         ))}
